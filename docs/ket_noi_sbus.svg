@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="480" height="230" preserveAspectRatio="xMinYMin meet" viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="480" height="230"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-230)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="106" width="115" height="55" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="32.49267578125" y="140.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,281) scale(1,-1)">MC7RE V2</text>
+			<text x="25.81787109375" y="126.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,253) scale(1,-1)">Cổng SBUS S</text>
+			<path d="M 115,133 L 142,133 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<rect x="142" y="127" width="60" height="12" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="153.8115234375" y="151" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,302) scale(1,-1)">R1 1 kΩ</text>
+			<path d="M 202,133 L 272,133 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<circle cx="285" cy="130" r="30" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 202,133 L 272,133 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<path d="M 272,109 L 272,151 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 272,146 L 302,166 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<path d="M 302,166 L 302,190 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<path d="M 272,114 L 302,94 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<polygon points="298 97, 287 100, 291 106" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 302,94 L 302,58 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<text x="248" y="145" style="font-family: ArialB; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,290) scale(1,-1)">B</text>
+			<text x="309" y="167" style="font-family: ArialB; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,334) scale(1,-1)">C</text>
+			<text x="312" y="84" style="font-family: ArialB; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,168) scale(1,-1)">E</text>
+			<text x="328" y="119" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,238) scale(1,-1)">Q1 NPN</text>
+			<text x="328" y="103" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,206) scale(1,-1)">2N3904</text>
+			<rect x="296" y="190" width="12" height="23" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 302,213 L 302,220 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<text x="278.23876953125" y="224" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,448) scale(1,-1)">3V3 STM32</text>
+			<text x="323" y="202" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,404) scale(1,-1)">R2 10 kΩ</text>
+			<path d="M 302,180 L 370,180 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<circle cx="302" cy="180" r="2" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<rect x="370" y="153" width="107" height="55" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="411.2685546875" y="187.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,375) scale(1,-1)">PA10</text>
+			<text x="395.4384765625" y="173.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,347) scale(1,-1)">USART1 RX</text>
+			<path d="M 65,58 L 437,58 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.4;"/>
+			<text x="160.8056640625" y="43" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,86) scale(1,-1)">GND bộ thu = GND STM32 = GND BEC</text>
+			<text x="0" y="21" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,42) scale(1,-1)">MC7RE (+) nối BEC +5 V; PA9 để hở.</text>
+			<text x="0" y="5" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,10) scale(1,-1)">Đấu theo chân B C E trong datasheet; hình không thể hiện thứ tự chân vỏ.</text>
+		</g>
+	</g>
+</svg>

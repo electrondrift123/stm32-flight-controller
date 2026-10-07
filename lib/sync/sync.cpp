@@ -7,7 +7,7 @@ SemaphoreHandle_t wireMutex;
 SemaphoreHandle_t spiMutex;
 SemaphoreHandle_t eulerAnglesMutex;
 
-SemaphoreHandle_t nRF24Mutex;
+SemaphoreHandle_t rcInputMutex;
 SemaphoreHandle_t telemetryMutex;
 
 // thesis 
@@ -37,9 +37,9 @@ void mutexes_init(void){
     while (1); // halt or retry
   }
 
-  nRF24Mutex = xSemaphoreCreateMutex();
-  if (nRF24Mutex == NULL) {
-    Serial.println("Failed to create nRF24 mutex!");
+  rcInputMutex = xSemaphoreCreateMutex();
+  if (rcInputMutex == NULL) {
+    Serial.println("Failed to create RC input mutex!");
     while (1); // halt or retry
   }
   telemetryMutex = xSemaphoreCreateMutex();

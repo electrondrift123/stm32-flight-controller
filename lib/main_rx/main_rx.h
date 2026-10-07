@@ -1,15 +1,6 @@
 #ifndef MAIN_RX_H
 #define MAIN_RX_H
-
-#include <Arduino.h>
-#include <SPI.h>
-#include "RF24.h"
-
-extern RF24 radio;
-extern uint8_t address[][6];
-#define PIPE_INDEX 0
-
-void nrfInterruptHandler(void);
+#include "sbus.h"
 bool main_rx_init(void);
-
+RcCommands main_rx_poll(void);
 #endif

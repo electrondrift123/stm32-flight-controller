@@ -15,8 +15,6 @@
 #define MPU6050_GYRO_SENSITIVITY 65.5f
 #define MPU6050_ACCEL_SENSITIVITY 4096.0f
 
-#define RAD_TO_DEG 57.2958f
-#define DEG_TO_RAD 0.0174533f
 
 typedef struct {
   float gx, gy, gz;

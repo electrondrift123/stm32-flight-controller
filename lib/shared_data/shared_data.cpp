@@ -57,13 +57,11 @@ EMA_t M4_LPF;
 
 // Failsafe for Radio
 // === Global / static variables ===
-TimerHandle_t linkWatchdogTimer = NULL;
-const TickType_t LINK_TIMEOUT_MS = 200;           
 volatile bool connection_ok = false;
 
 volatile float eulerAngles[3] = {0.0f, 0.0f, 0.0f};
 
-volatile float inputList[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.01f, 0.01f};
+volatile float inputList[8] = {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.01f, 0.01f};
 volatile float telemetry[5] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
 volatile int16_t thesis_telemetry[16] = {0};
@@ -72,4 +70,4 @@ volatile float MadgwickSensorList[9] = {0.00f, 0.00f, 0.00f,
                                         0.00f, 0.00f, 0.00f,
                                         0.00f, 0.00f, 0.00f};
 
-volatile bool SAFE_WDT = true;
+volatile bool SAFE_WDT = false;

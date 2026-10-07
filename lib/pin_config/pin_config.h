@@ -7,20 +7,9 @@
 #define I2C_SCL1_PIN       6   // PB6
 #define I2C_SDA1_PIN       7   // PB7
 
-// ==== SPI default pins =====
-#define SPI_SCK_PIN       5   // PA5
-#define SPI_MISO_PIN      6   // PA6
-#define SPI_MOSI_PIN      7   // PA7
-
-// ==== SX1278 pins =====
-// #define LORA_NSS_PIN       
-// #define LORA_DIO0_PIN       
-// #define LORA_RST_PIN       
-
-// ===== nRF24 pins =====
-#define NRF_CE_PIN    PB13
-#define NRF_CSN_PIN   PA4
-#define NRF_IRQ_PIN   PB1  
+// ===== MC7RE-V2 SBUS (external inverter required) =====
+#define RC_SBUS_RX_PIN PA10
+#define RC_SBUS_TX_PIN PA9 // Reserved by USART1; leave unconnected
 
 // ===== LED PIN ======
 #define BUILTIN_LED_PORT GPIOC
@@ -39,12 +28,6 @@
 #define MOTOR2_PWM_PIN    1  // TIM2_CH2 (front right)
 #define MOTOR3_PWM_PIN    2  // TIM2_CH3 (back left)
 #define MOTOR4_PWM_PIN    3  // TIM2_CH4 (back right)
-
-// ===== GPIO Modes (optional) =====
-#define GPIO_MODE_INPUT   0x0
-#define GPIO_MODE_OUTPUT  0x1
-#define GPIO_MODE_ALT     0x2
-#define GPIO_MODE_ANALOG  0x3
 
 // ===== Function Prototypes =====
 void Buzzer_Init(void);

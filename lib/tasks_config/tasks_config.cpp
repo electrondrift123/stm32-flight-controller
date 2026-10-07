@@ -1,8 +1,6 @@
 #include "tasks_config.h"
 
 #include <STM32FreeRTOS.h>
-#include <RF24.h>
-// #include <RadioLib.h>
 
 #include "QMC5883P.h"
 #include "MPU6050.h"
@@ -29,7 +27,7 @@
 #define PRIORITY_PID_FUSION   1 // 500 Hz -> try prio: 2 (radio task starve)
 #define PRIORITY_WDT          1 // 1 Hz
 #define PRIORITY_SENSOR_READ  1 // 1 kHz
-#define PRIORITY_RADIO        1 // Interrupt driven
+#define PRIORITY_RADIO        1 // Poll SBUS every 2ms
 #define PRIORITY_BLINK        1 // 1 Hz
 
 // Complementary filter for altitude estimation
@@ -81,67 +79,6 @@ bool sensorsReady(){
   return BMP280_read(&bmpData) && MPU6050_read(&mpuData) && QMC5883P_read(&magData);
 }
 
-void fastRadioRecoverRX() {
-  // // === Protect shared data FIRST ===
-  // taskENTER_CRITICAL();
-  // inputList[0] = 0.0f;  // Vcmd
-  // inputList[1] = 0.0f;  // yaw
-  // inputList[2] = 0.0f;  // pitch
-  // inputList[3] = 0.0f;  // roll   
-  // taskEXIT_CRITICAL();
-
-  radio.stopListening();
-  radio.flush_rx();
-  radio.flush_tx();
-  radio.startListening();
-  radio.clearStatusFlags();
-}
-
-// === Timer callback (runs in timer task context!) ===
-static void linkTimeoutCallback(TimerHandle_t xTimer){
-  (void) xTimer;
-
-  connection_ok = false;
-
-  // Safest & fastest way for very short write
-  taskENTER_CRITICAL();
-  inputList[0] = 0.0f; // zero Vcmd
-  inputList[1] = 0.0f; // zero yaw input
-  inputList[2] = 0.0f; // zero pitch input
-  inputList[3] = 0.0f; // zero roll input
-  if (inputList[4] == 0.0f) inputList[5] = 1.0f;   // set E-landing flag;   
-  taskEXIT_CRITICAL();
-
-  // fastRadioRecoverRX();
-}
-
-void initLinkWatchdog(void){
-  if (linkWatchdogTimer != NULL) {
-    // already created → avoid double creation
-    return;
-  }
-
-  linkWatchdogTimer = xTimerCreate(
-    "LinkWD",
-    LINK_TIMEOUT_MS / portTICK_PERIOD_MS, // timer period in ticks
-    pdTRUE,                 // auto-reload
-    NULL,
-    linkTimeoutCallback
-  );
-
-  if (linkWatchdogTimer == NULL) {
-      // Critical error - handle somehow (LED blink fast, Serial error, etc.)
-      // For development you can leave it like this:
-      // for(;;) { /* fail safe loop */ }
-      connection_ok = false;
-      taskENTER_CRITICAL();
-      inputList[4] = 1.0f;  // stay killed
-      taskEXIT_CRITICAL();
-  }
-
-  // We do NOT start it here — first valid packet will start/reset it
-}
-
 /////// TASKS /////// 
 void watchdogTask(void* parameters) {
   vTaskDelay(pdMS_TO_TICKS(1000));
@@ -187,8 +124,9 @@ void readSensorsTask(void* Parameters) {  // 1 kHz
   const TickType_t intervalTicks = pdMS_TO_TICKS(1);  // 1ms = 1 kHz
   TickType_t lastWakeTime = xTaskGetTickCount();
 
-  float local_altitude; 
-  float ax, ay, az, wx, wy, wz, mx, my, mz; // Madgwick
+  float local_altitude = 0.0f;
+  float ax = 0, ay = 0, az = 1, wx = 0, wy = 0, wz = 0;
+  float mx = 0, my = 0, mz = 0; // Publish only successful sensor samples
 
   // init for Accel LPF PT1
   emaInit(&axLPF, 1.0f, 3.0f, 1000.0f); // 15 Hz cutoff
@@ -227,10 +165,12 @@ void readSensorsTask(void* Parameters) {  // 1 kHz
 
     kalman_counter++;
 
+    bool sampleReady = false;
     // read the BMP280 sensor
     if (xSemaphoreTake(wireMutex, pdMS_TO_TICKS(1)) == pdTRUE){
       // read MPU6050, BMP280, Magnetometer sensor: 
       if (sensorsReady()) {
+        sampleReady = true;
         WDT_setSafe(true);
 
         // Successfully read MPU6050 data (acc_xyz is in g-units)
@@ -261,17 +201,21 @@ void readSensorsTask(void* Parameters) {  // 1 kHz
 
         local_altitude = bmpData.altitude; // Store altitude locally
        
-      }else {
-        if (xSemaphoreTake(serialMutex, portMAX_DELAY)){
-          Serial.println("Error reading sensors");
-        }
-        // local_altitude = 0.0f; // Set to zero if read fails
-        buzz_on();
-        vTaskDelay(pdMS_TO_TICKS(100));
-        buzz_off();
+      } else {
         WDT_setSafe(false);
+        if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(1)) == pdTRUE) {
+          Serial.println("Error reading sensors");
+          xSemaphoreGive(serialMutex);
+        }
+        buzz_on();
       }
       xSemaphoreGive(wireMutex);
+    }
+
+    if (!sampleReady) {
+      WDT_setSafe(false);
+      vTaskDelayUntil(&lastWakeTime, intervalTicks);
+      continue; // Never feed stale/uninitialized samples into sensor fusion.
     }
 
     // update the Madgwick's data:
@@ -377,14 +321,14 @@ void PIDtask(void* Parameters) {
 
   const float ARM_HOLD_TIME = 2.1f; // 2.1 sec
 
-  const float MOTOR_MIN = 1050.0f;
+  const float MOTOR_MIN = 1000.0f;
   const float MOTOR_MAX = 2000.0f;
 
-  bool KILL_MOTORS = false;
-  bool E_LAND = false; // Emergency Landing flag if signal is loss
+  bool KILL_MOTORS = true;
+  bool E_LAND = false; // Pilot CH6 or low battery requests descent
 
   // ====================== VARIABLES ======================
-  float vz_cmd = 0.0f;                    // Raw stick [-80,100]
+  float vz_cmd = 0.0f;                    // [-0.8, 1.0] m/s
   float vz_cmdFiltered = 0.0f;            // in m/s
   float velocity_z = 0.0f;
   float altitude = 0.0f;
@@ -444,7 +388,8 @@ void PIDtask(void* Parameters) {
   float pitch_rate_setpoint = 0.0f;
   float yaw_rate_setpoint = 0.0f;
 
-  float ax, ay, az, wx, wy, wz, mx, my, mz;
+  float ax = 0, ay = 0, az = 1, wx = 0, wy = 0, wz = 0;
+  float mx = 0, my = 0, mz = 0;
 
   int outer_loop_counter = 0;
   int print_counter = 0;
@@ -479,13 +424,13 @@ void PIDtask(void* Parameters) {
     yawRate   = wz;
 
     // User Input
-    if (xSemaphoreTake(nRF24Mutex, pdMS_TO_TICKS(1)) == pdTRUE) {
+    if (xSemaphoreTake(rcInputMutex, pdMS_TO_TICKS(1)) == pdTRUE) {
       vz_cmd     = inputList[0]; // [-0.8, 1.0] m/s
       yawInput   = inputList[1]; // [-180, 180] deg/s → rad/s
       pitchInput = inputList[2]; // [-20, 20] deg → rad
       rollInput  = inputList[3]; // [-20, 20] deg → rad
 
-      KILL_MOTORS = (inputList[4] != 0.0f);
+      KILL_MOTORS = (inputList[4] != 0.0f) || !connection_ok;
       bool pilot_E_LAND = (inputList[5] != 0.0f);
 
       // Pilot E_LAND switch OR low battery triggers emergency descent
@@ -495,8 +440,12 @@ void PIDtask(void* Parameters) {
         else E_LAND = false;
       }
       
-      xSemaphoreGive(nRF24Mutex);
+      xSemaphoreGive(rcInputMutex);
+    } else {
+      KILL_MOTORS = true; // Never use stale enable state if input snapshot fails.
     }
+
+    KILL_MOTORS = KILL_MOTORS || !WDT_isSafe();
 
     // constrain redundancy 
     rollInput  = constrainFloat(rollInput, -PITCH_ROLL_MAX, PITCH_ROLL_MAX);
@@ -537,7 +486,7 @@ void PIDtask(void* Parameters) {
     }
 
     // ====================== ARMING (DJI Style) ======================
-    bool sticksInArmPosition = (vz_cmd < -0.70f) && (fabsf(pitchInput) > 18.0f * DEG_TO_RAD) && (fabs(pitch) < 10.0f) && (fabs(roll) < 10.0f);
+    bool sticksInArmPosition = !KILL_MOTORS && (vz_cmd < -0.70f) && (fabsf(pitchInput) > 18.0f * DEG_TO_RAD) && (fabsf(pitch) < 10.0f * DEG_TO_RAD) && (fabsf(roll) < 10.0f * DEG_TO_RAD);
 
     if (flightState == DISARMED) {
       if (sticksInArmPosition) {
@@ -629,7 +578,7 @@ void PIDtask(void* Parameters) {
     if (outer_loop_counter >= 5) {
       // Vertical Velocity Controller
       if ((flightState == TAKEOFF || flightState == FLYING) && vertical_mode == VELOCITY_CONTROL) {
-        vz_correction = computeVelocityControlZ(&vz_in, vz_cmdFiltered, velocity_z, dt);
+        vz_correction = computeVelocityControlZ(&vz_in, vz_cmdFiltered, velocity_z, 0.01f);
       }
       roll_rate_setpoint  = computeLyGAPID_out(&pidRoll,  rollInputFiltered,  roll,  0.01f);
       pitch_rate_setpoint = computeLyGAPID_out(&pidPitch, pitchInputFiltered, pitch, 0.01f);
@@ -654,7 +603,7 @@ void PIDtask(void* Parameters) {
     // DISARMED and ARMED_IDLE handle their own motor values directly
 
     // Motor Mixer
-    if (KILL_MOTORS) {
+    if (KILL_MOTORS || flightState == DISARMED) {
       resetLyGAPID(&pidRoll); resetLyGAPID(&pidPitch);
       resetLyGAPID(&pidRollRate); resetLyGAPID(&pidPitchRate); resetLyGAPID(&pidYawRate);
       // reset_kalmanAltitude(&kalmanState);
@@ -664,6 +613,8 @@ void PIDtask(void* Parameters) {
       vz_in.is_flying = 0.0f;
       pidRoll.landed = pidPitch.landed = pidRollRate.landed = pidPitchRate.landed = 1.0f;
       for (int i = 0; i < 4; i++) motor_cmd[i] = MOTOR_MIN;
+    } else if (flightState == ARMED_IDLE) {
+      for (int i = 0; i < 4; i++) motor_cmd[i] = 1150.0f;
     } else {
       float R_mix = constrainFloat(computeLyGAPID_in(&pidRollRate, roll_rate_setpoint, rollRate, dt), -U_MAX_ROLL_RATE, U_MAX_ROLL_RATE);
       float P_mix = constrainFloat(computeLyGAPID_in(&pidPitchRate, pitch_rate_setpoint, pitchRate, dt), -U_MAX_PITCH_RATE, U_MAX_PITCH_RATE);
@@ -704,79 +655,22 @@ void PIDtask(void* Parameters) {
 }
 
 void RXtask(void* Parameters) {
-    int16_t local_telemetry[6] = {0}; 
-    int16_t rx_load[5] = {0};
-
-    initLinkWatchdog();
-    connection_ok = false;
-
-    for (;;) {
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-
-        uint8_t flags = radio.clearStatusFlags();   // or radio.getStatus() if you prefer
-
-        if (flags & RF24_RX_DR) {
-            while (radio.available()) {
-                connection_ok = true;
-
-                // Restart watchdog
-                if (xTimerIsTimerActive(linkWatchdogTimer) == pdFALSE) {
-                    xTimerStart(linkWatchdogTimer, 0);
-                } else {
-                    xTimerReset(linkWatchdogTimer, 0);
-                }
-
-                // Prepare ACK payload
-                if (xSemaphoreTake(eulerAnglesMutex, pdMS_TO_TICKS(1)) == pdTRUE) {
-                    local_telemetry[0] = (int16_t)eulerAngles[0];
-                    local_telemetry[1] = (int16_t)eulerAngles[1];
-                    local_telemetry[2] = (int16_t)eulerAngles[2];
-                    xSemaphoreGive(eulerAnglesMutex);
-                }
-                if (xSemaphoreTake(telemetryMutex, pdMS_TO_TICKS(1)) == pdTRUE) {
-                    local_telemetry[3] = (int16_t)(telemetry[0] * 100.0f);
-                    local_telemetry[4] = (int16_t)telemetry[4];
-                    local_telemetry[5] = (int16_t)(telemetry[1] * 100.0f);
-                    xSemaphoreGive(telemetryMutex);
-                }
-
-                radio.writeAckPayload(PIPE_INDEX, local_telemetry, sizeof(local_telemetry));
-
-                radio.read(rx_load, sizeof(rx_load));
-
-                // Process commands...
-                float Tcmd = (float)rx_load[0] / 100.0f;
-                float Ycmd = ((float)rx_load[1]) * DEG_TO_RAD;
-                float Pcmd = ((float)rx_load[2] / 100.0f) * DEG_TO_RAD * (-1.0f);
-                float Rcmd = ((float)rx_load[3] / 100.0f) * DEG_TO_RAD;
-                float kill = (rx_load[4] == 0) ? 0.0f : 1.0f;
-
-                if (xSemaphoreTake(nRF24Mutex, pdMS_TO_TICKS(1)) == pdTRUE) {
-                    inputList[0] = constrainFloat(Tcmd, THROTTLE_MIN, THROTTLE_MAX);
-                    inputList[1] = constrainFloat(Ycmd, -YAW_MAX, YAW_MAX);
-                    inputList[2] = constrainFloat(Pcmd, -PITCH_ROLL_MAX, PITCH_ROLL_MAX);
-                    inputList[3] = constrainFloat(Rcmd, -PITCH_ROLL_MAX, PITCH_ROLL_MAX);
-                    inputList[4] = kill;
-                    xSemaphoreGive(nRF24Mutex);
-                }
-            }
-        }
-
-        // Handle TX FIFO issues (MAX_RT flag)
-        if (flags & 0x10) {
-            radio.flush_tx();
-        }
-
-        // === NEW: Periodic recovery check ===
-        static uint32_t lastRecoverCheck = 0;
-        if (xTaskGetTickCount() - lastRecoverCheck > pdMS_TO_TICKS(500)) { // was 200
-            lastRecoverCheck = xTaskGetTickCount();
-            
-            if (!connection_ok) {
-              fastRadioRecoverRX();     // <--- Add this
-            }
-        }
+  TickType_t lastWakeTime = xTaskGetTickCount();
+  const TickType_t interval = pdMS_TO_TICKS(2) > 0 ? pdMS_TO_TICKS(2) : 1;
+  for (;;) {
+    const RcCommands command = main_rx_poll();
+    if (xSemaphoreTake(rcInputMutex, portMAX_DELAY) == pdTRUE) {
+      inputList[0] = command.vertical;
+      inputList[1] = command.yaw;
+      inputList[2] = command.pitch;
+      inputList[3] = command.roll;
+      inputList[4] = command.kill ? 1.0f : 0.0f;
+      inputList[5] = command.land ? 1.0f : 0.0f;
+      connection_ok = command.connected;
+      xSemaphoreGive(rcInputMutex);
     }
+    vTaskDelayUntil(&lastWakeTime, interval);
+  }
 }
 
 
@@ -887,7 +781,7 @@ void freeRTOS_tasks_init(void){
 
   result = xTaskCreate(
     RXtask,
-    "nRF24 RX task",
+    "MC7RE SBUS RX task",
     256,
     NULL,
     PRIORITY_RADIO,

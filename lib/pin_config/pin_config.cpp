@@ -77,8 +77,10 @@ void MotorPWM_TIM2_Init(void) {
     GPIOA->AFR[0]  &= ~0x0000FFFF;
     GPIOA->AFR[0]  |=  0x00001111;         // AF1 for TIM2 on PA0-PA3
 
-    // Timer base for 50 Hz (assuming 84 MHz APB1 → 1 MHz after prescaler)
-    TIM2->PSC = 83;      // 84 MHz / 84 = 1 MHz
+    // Derive TIM2 clock from the board configuration (F411 runs at 100 MHz).
+    uint32_t timerClock = HAL_RCC_GetPCLK1Freq();
+    if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0) timerClock *= 2;
+    TIM2->PSC = timerClock / 1000000UL - 1; // 1us per tick
     TIM2->ARR = 19999;   // 1 MHz / 20000 = 50 Hz
 
     // === PWM Mode 1 on all 4 channels (active high) ===

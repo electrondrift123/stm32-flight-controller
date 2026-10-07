@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="480" height="120" preserveAspectRatio="xMinYMin meet" viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="480" height="120"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-120)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="45" width="100" height="48" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="23.6083984375" y="76.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,152) scale(1,-1)">DISARMED</text>
+			<text x="32.10693359375" y="62.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,124) scale(1,-1)">1000 µs</text>
+			<rect x="126" y="45" width="100" height="48" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="145.4384765625" y="76.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,152) scale(1,-1)">ARMED IDLE</text>
+			<text x="158.10693359375" y="62.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,124) scale(1,-1)">1150 µs</text>
+			<rect x="252" y="45" width="100" height="48" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="278.943359375" y="76.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,152) scale(1,-1)">TAKEOFF</text>
+			<text x="269.744140625" y="62.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,124) scale(1,-1)">Tăng lực nâng</text>
+			<rect x="378" y="45" width="100" height="48" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="409.94091796875" y="76.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,152) scale(1,-1)">FLYING</text>
+			<text x="394.650390625" y="62.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,124) scale(1,-1)">Điều khiển PID</text>
+			<path d="M 100,69 L 126,69 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="126 69, 120 72, 120 66" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 226,69 L 252,69 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="252 69, 246 72, 246 66" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 352,69 L 378,69 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="378 69, 372 72, 372 66" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<text x="94.5390625" y="106" style="font-family: Arial; font-size: 8px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,212) scale(1,-1)">Giữ 2,1 s</text>
+			<text x="223.876953125" y="106" style="font-family: Arial; font-size: 8px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,212) scale(1,-1)">Nâng ga</text>
+			<text x="348.55078125" y="106" style="font-family: Arial; font-size: 8px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,212) scale(1,-1)">Hết ramp</text>
+			<path d="M 430,45 L 430,15 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 430,15 L 50,15 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,15 L 50,45 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="50 45, 47 39, 53 39" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<text x="106.419921875" y="1" style="font-family: Arial; font-size: 8px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,2) scale(1,-1)">CH5 thấp, mất link, lỗi cảm biến hoặc nghiêng quá giới hạn: về DISARMED</text>
+		</g>
+	</g>
+</svg>

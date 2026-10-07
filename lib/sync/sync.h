@@ -11,7 +11,7 @@ extern SemaphoreHandle_t wireMutex;
 extern SemaphoreHandle_t spiMutex;
 extern SemaphoreHandle_t eulerAnglesMutex;
 
-extern SemaphoreHandle_t nRF24Mutex;
+extern SemaphoreHandle_t rcInputMutex;
 extern SemaphoreHandle_t telemetryMutex;
 
 // thesis

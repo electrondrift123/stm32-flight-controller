@@ -20,7 +20,6 @@
 #include "kalmanAltitude.h"
 
 // Constants
-#define PI 3.1415f
 
 // outer loop (desired angular rate in rad/s): 180 deg/sec
 #define U_MAX_ROLL          PI 
@@ -120,9 +119,7 @@ extern EMA_t M2_LPF;
 extern EMA_t M3_LPF;
 extern EMA_t M4_LPF;
 
-// Failsafe for Radio 
-extern TimerHandle_t linkWatchdogTimer;
-extern const TickType_t LINK_TIMEOUT_MS;           // your desired timeout
+// RC link status; receiver enforces timeout and re-enable interlock.
 extern volatile bool connection_ok;
 
 // Euler angles output from filter

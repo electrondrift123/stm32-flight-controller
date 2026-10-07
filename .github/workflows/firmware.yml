@@ -1,0 +1,17 @@
+name: Firmware and SBUS tests
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test SBUS parser and receiver interlocks
+        run: python tools/run_sbus_tests.py
+      - name: Install PlatformIO
+        run: pip install platformio==6.2.0
+      - name: Compile STM32F411CE firmware
+        run: pio run -e blackpill_f411ce
+

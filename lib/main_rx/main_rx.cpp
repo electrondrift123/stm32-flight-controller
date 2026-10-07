@@ -1,69 +1,39 @@
 #include "main_rx.h"
-
 #include <Arduino.h>
-#include <SPI.h>
-#include "RF24.h"
-
 #include "pin_config.h"
-#include "sync.h"
 
-RF24 radio(NRF_CE_PIN, NRF_CSN_PIN);
-uint8_t address[][6] = { "1Node", "2Node" };
+// External SBUS inverter required before USART1 RX (PA10).
+// PA9 is allocated as TX by Uart but is left unconnected.
+static Uart receiverSerial(RC_SBUS_RX_PIN, RC_SBUS_TX_PIN);
+static SbusParser parser;
+static RcInput receiver;
 
-
-// ------------------- ISR -------------------
-void nrfInterruptHandler(void) {
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  vTaskNotifyGiveFromISR(radioTaskHandle, &xHigherPriorityTaskWoken);
-  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+bool main_rx_init(void) {
+  receiverSerial.begin(100000, SERIAL_8E2);
+  Serial.println("MC7RE-V2 SBUS on PA10: 100000 baud, 8E2, external inverter");
+  return true; // UART setup only; link remains unsafe until healthy frames arrive.
 }
 
-
-bool main_rx_init(void){
-    // Setup radio
-  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
-  if (!radio.begin()) {
-    Serial.println("nRF24 not detected - but SPI works!");
-    Serial.println("Trying reset...");
-   
-    // Manual reset procedure
-    digitalWrite(NRF_CE_PIN, LOW);
-    digitalWrite(NRF_CSN_PIN, HIGH);
-    delay(100);
-    radio.begin();
+RcCommands main_rx_poll(void) {
+  SbusFrame frame;
+  while (receiverSerial.available() > 0) {
+    if (parser.push(uint8_t(receiverSerial.read()), frame)) {
+      receiver.update(frame, millis());
+#ifdef RC_INPUT_DIAGNOSTICS
+      static uint32_t lastPrint = 0;
+      if (uint32_t(millis() - lastPrint) >= 200) {
+        lastPrint = millis();
+        Serial.print("SBUS CH1..6:");
+        for (uint8_t i = 0; i < 6; ++i) {
+          Serial.print(' ');
+          Serial.print(frame.channels[i]);
+        }
+        Serial.print(" lost="); Serial.print(frame.lost);
+        Serial.print(" failsafe="); Serial.println(frame.failsafe);
+      }
+#endif
+    }
   }
-  SPI.endTransaction();
-  radio.flush_rx();
-  radio.flush_tx();
-  Serial.println("radio initialized!");
-  // --- RADIO SETTINGS TO MATCH TX ---
-  radio.setPALevel(RF24_PA_HIGH); // Use LOW or MAX (depending on power)
-  // radio.setDataRate(RF24_1MBPS); // MATCH: must match TX
-  radio.setDataRate(RF24_250KBPS); // MATCH: must match TX
-  radio.setChannel(108); // MATCH: must match TX
-  radio.setCRCLength(RF24_CRC_16); // Optional, but best to match TX
-  radio.enableDynamicPayloads(); // Enable variable-length payloads
-  radio.enableAckPayload(); // Allow ACK payloads
-  // radio.setRetries(2, 15); // Optional, RX ignores but safe for consistency
-  // Only trigger interrupt on data ready (RX)
-  radio.setStatusFlags(RF24_RX_DR);
-  // Address pipe must match TX's writing pipe
-  radio.openReadingPipe(PIPE_INDEX, address[0]);
-
-  // Pre-load the ACK BEFORE startListening
-  // int16_t startup_telemetry[5] = {0, 0, 0, 0, 0};
-  // radio.writeAckPayload(PIPE_INDEX, startup_telemetry, sizeof(startup_telemetry));
-
-  radio.startListening();
-  // IRQ pin
-  pinMode(NRF_IRQ_PIN, INPUT);
-  attachInterrupt(digitalPinToInterrupt(NRF_IRQ_PIN), nrfInterruptHandler, FALLING);
-  if (!radio.isChipConnected()) {
-    Serial.println("nRF24 disconnected!");
-    return false;
-  } else {
-    Serial.println("nRF24 connected!");
-    return true;
-  }
+  return receiver.read(millis());
 }
 

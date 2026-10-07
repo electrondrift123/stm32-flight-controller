@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="480" height="200" preserveAspectRatio="xMinYMin meet" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="480" height="200"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-200)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="132" width="82" height="56" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="26.83251953125" y="167.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,334) scale(1,-1)">MC6C</text>
+			<text x="21.54443359375" y="153.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,306) scale(1,-1)">Tay phát</text>
+			<rect x="108" y="132" width="96" height="56" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="130.99267578125" y="167.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,334) scale(1,-1)">MC7RE V2</text>
+			<text x="141.54443359375" y="153.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,306) scale(1,-1)">Bộ thu</text>
+			<rect x="230" y="132" width="103" height="56" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="259.5419921875" y="167.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,334) scale(1,-1)">Mạch đảo</text>
+			<text x="267.88427734375" y="153.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,306) scale(1,-1)">SBUS</text>
+			<rect x="359" y="132" width="118" height="56" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="383.5419921875" y="167.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,334) scale(1,-1)">STM32F411CE</text>
+			<text x="384.65283203125" y="153.0" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,306) scale(1,-1)">PA10 USART1</text>
+			<path d="M 82,160 L 108,160 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="108 160, 102 163, 102 157" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 204,160 L 230,160 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="230 160, 224 163, 224 157" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 333,160 L 359,160 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="359 160, 353 163, 353 157" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<text x="88.66796875" y="192" style="font-family: Arial; font-size: 8px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,384) scale(1,-1)">RF</text>
+			<rect x="15" y="30" width="188" height="65" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="35.9091796875" y="69.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,139) scale(1,-1)">MPU6050  BMP280  QMC5883P</text>
+			<text x="72.86962890625" y="55.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,111) scale(1,-1)">I2C PB6 và PB7</text>
+			<rect x="264" y="30" width="213" height="65" rx="4" ry="4" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="314.92138671875" y="69.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,139) scale(1,-1)">PWM PA0 PA1 PA2 PA3</text>
+			<text x="324.1376953125" y="55.5" style="font-family: Arial; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,111) scale(1,-1)">ESC và bốn động cơ</text>
+			<path d="M 203,62 L 237,62 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="237 62, 231 65, 231 59" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 237,62 L 237,112 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 237,112 L 416,112 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="416 112, 410 115, 410 109" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 416,112 L 416,132 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="416 132, 413 126, 419 126" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<path d="M 441,132 L 441,95 Z" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="441 95, 438 101, 444 101" style="stroke: rgb(14%,29%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(14%,29%,40%); fill-rule: evenodd;"/>
+			<text x="9" y="4" style="font-family: Arial; font-size: 9px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,8) scale(1,-1)">BEC 5 V cấp bộ thu; mọi khối dùng GND chung.</text>
+		</g>
+	</g>
+</svg>

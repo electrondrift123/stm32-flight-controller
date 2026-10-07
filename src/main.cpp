@@ -1,9 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <SPI.h>
 #include <STM32FreeRTOS.h>
-// #include <RadioLib.h>
-#include <RF24.h>
 
 // Custom Libraries
 #include "pin_config.h"
@@ -12,7 +9,7 @@
 #include "sync.h"
 #include "sensors.h"
 #include "shared_data.h"
-#include "main_rx.h" // Include main_rx for nRF24 radio handling
+#include "main_rx.h" // MC7RE-V2 SBUS receiver
 #include "LyGAPID.h"
 #include "WDT.h"
 #include "Butterworth2ndLPF.h"
@@ -38,10 +35,6 @@ void setup() {
   delay(250);
   Serial.println("i2c ready!");
 
-  SPI.begin();
-  delay(250);
-  Serial.println("SPI ready!");
-
   used_gpio_init(); // Initialize GPIOs (buzzer, motors, blink)
   sensors_init(); // the sensors initialization 
   mutexes_init(); // Initialize mutexes
@@ -63,7 +56,7 @@ void setup() {
       buzz_off();
       delay(500);
     }
-  } // Initialize nRF24 radio
+  } // Initialize MC7RE-V2 SBUS UART
  
   // === PID CONTROLLER INITIALIZATION ===
   // angle mode 
